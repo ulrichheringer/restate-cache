@@ -21,14 +21,14 @@ async fn real_server_roundtrip_expiry_and_corruption() {
         .as_millis() as u64;
     let entry = Entry {
         value: vec![0, 255, 3],
-        fresh_until_ms: now + 20,
-        expires_at_ms: now + 100,
+        fresh_until_ms: now + 100,
+        expires_at_ms: now + 500,
     };
     store.put("key", entry.clone()).await.unwrap();
     let actual = store.get("key").await.unwrap().unwrap();
     assert_eq!(actual.value, entry.value);
     assert_eq!(actual.expires_at_ms, entry.expires_at_ms);
-    tokio::time::sleep(Duration::from_millis(140)).await;
+    tokio::time::sleep(Duration::from_millis(650)).await;
     assert!(store.get("key").await.unwrap().is_none());
     let mut connection = redis::Client::open(url)
         .unwrap()

@@ -88,6 +88,7 @@ impl Store for MemoryStore {
             let mut entries = self.entries.lock().await;
             entries.retain(|_, v| v.expires_at_ms > now_ms());
             if entry.expires_at_ms <= now_ms() {
+                entries.remove(key);
                 return Ok(());
             }
             if !entries.contains_key(key) && entries.len() >= self.capacity {
